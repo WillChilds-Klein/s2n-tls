@@ -51,7 +51,7 @@ int main()
 {
     BEGIN_TEST();
 
-    // Verify that Kyber512 is available from AWS-LC if AWS-LC is our current libcrypto.
+    /* Verify that Kyber512 is available from AWS-LC if AWS-LC is our current libcrypto. */
     if (s2n_libcrypto_is_awslc() && s2n_pq_is_enabled()) {
         EXPECT_TRUE(s2n_libcrypto_supports_kyber_512());
     } else {
