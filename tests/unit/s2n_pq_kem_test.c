@@ -14,6 +14,7 @@
  */
 
 #include "pq-crypto/s2n_pq.h"
+#include "crypto/s2n_fips.h"
 #include "crypto/s2n_openssl.h"
 #include "s2n_test.h"
 #include "tests/testlib/s2n_testlib.h"
@@ -51,8 +52,8 @@ int main()
 {
     BEGIN_TEST();
 
-    /* Verify that Kyber512 is available from AWS-LC if AWS-LC is our current libcrypto. */
-    if (s2n_libcrypto_is_awslc() && s2n_pq_is_enabled()) {
+    /* Verify that Kyber512 is available from AWS-LC if non-FIPS AWS-LC is our current libcrypto. */
+    if (s2n_libcrypto_is_awslc() && !s2n_libcrypto_is_fips()) {
         EXPECT_TRUE(s2n_libcrypto_supports_kyber_512());
     } else {
         EXPECT_FALSE(s2n_libcrypto_supports_kyber_512());
