@@ -29,7 +29,7 @@ DEFINE_POINTER_CLEANUP_FUNC(EVP_PKEY *, EVP_PKEY_free);
 DEFINE_POINTER_CLEANUP_FUNC(EVP_PKEY_CTX *, EVP_PKEY_CTX_free);
 
 int s2n_kyber_512_evp_generate_keypair(uint8_t *public_key, uint8_t *secret_key) {
-    DEFER_CLEANUP(EVP_PKEY_CTX *kyber_pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_KEM, NULL), EVP_PKEY_CTX_free_pointer);
+    EVP_PKEY_CTX *kyber_pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_KEM, NULL);
     POSIX_GUARD_PTR(kyber_pkey_ctx);
     POSIX_ENSURE(EVP_PKEY_CTX_kem_set_params(kyber_pkey_ctx, NID_KYBER512_R3), S2N_FAILURE);
     POSIX_ENSURE(EVP_PKEY_keygen_init(kyber_pkey_ctx), S2N_FAILURE);
