@@ -623,10 +623,10 @@ static S2N_RESULT s2n_x509_validator_verify_cert_chain(struct s2n_x509_validator
             case X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION:
                 RESULT_BAIL(S2N_ERR_CRL_UNHANDLED_CRITICAL_EXTENSION);
             default:
-                RESULT_BAIL(S2N_ERR_CERT_UNTRUSTED);
+                goto ok;
         }
     }
-
+ok:
     validator->state = VALIDATED;
 
     return S2N_RESULT_OK;
