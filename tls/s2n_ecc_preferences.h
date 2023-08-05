@@ -34,5 +34,9 @@ extern const struct s2n_ecc_preferences s2n_ecc_preferences_20210816;
 extern const struct s2n_ecc_preferences s2n_ecc_preferences_test_all;
 extern const struct s2n_ecc_preferences s2n_ecc_preferences_null;
 
+extern const struct s2n_ecc_preferences s2n_ecc_preferences_tls_1_3_p256;
+extern const struct s2n_ecc_preferences s2n_ecc_preferences_tls_1_3_p384;
+extern const struct s2n_ecc_preferences s2n_ecc_preferences_tls_1_3_p521;
+
 int s2n_check_ecc_preferences_curves_list(const struct s2n_ecc_preferences *ecc_preferences);
 bool s2n_ecc_preferences_includes_curve(const struct s2n_ecc_preferences *ecc_preferences, uint16_t query_iana_id);

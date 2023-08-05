@@ -42,6 +42,18 @@ const struct s2n_ecc_named_curve *const s2n_ecc_pref_list_20230623[] = {
     &s2n_ecc_curve_secp384r1,
 };
 
+const struct s2n_ecc_named_curve *const s2n_ecc_pref_list_tls_1_3_p256[] = {
+    &s2n_ecc_curve_secp256r1,
+};
+
+const struct s2n_ecc_named_curve *const s2n_ecc_pref_list_tls_1_3_p384[] = {
+    &s2n_ecc_curve_secp384r1,
+};
+
+const struct s2n_ecc_named_curve *const s2n_ecc_pref_list_tls_1_3_p521[] = {
+    &s2n_ecc_curve_secp521r1,
+};
+
 /*
  * These curves were chosen based on the following specification:
  * https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf
@@ -108,6 +120,22 @@ const struct s2n_ecc_preferences s2n_ecc_preferences_test_all = {
 const struct s2n_ecc_preferences s2n_ecc_preferences_null = {
     .count = 0,
     .ecc_curves = NULL,
+};
+
+
+const struct s2n_ecc_preferences s2n_ecc_preferences_tls_1_3_p256 = {
+    .count = s2n_array_len(s2n_ecc_pref_list_tls_1_3_p256),
+    .ecc_curves = s2n_ecc_pref_list_tls_1_3_p256,
+};
+
+const struct s2n_ecc_preferences s2n_ecc_preferences_tls_1_3_p384 = {
+    .count = s2n_array_len(s2n_ecc_pref_list_tls_1_3_p384),
+    .ecc_curves = s2n_ecc_pref_list_tls_1_3_p384,
+};
+
+const struct s2n_ecc_preferences s2n_ecc_preferences_tls_1_3_p521 = {
+    .count = s2n_array_len(s2n_ecc_pref_list_tls_1_3_p521),
+    .ecc_curves = s2n_ecc_pref_list_tls_1_3_p521,
 };
 
 /* Checks if the ecc_curves present in s2n_ecc_preferences list is a subset of s2n_all_supported_curves_list
