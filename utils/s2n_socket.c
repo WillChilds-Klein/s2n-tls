@@ -56,6 +56,7 @@ int s2n_socket_quickack(struct s2n_connection *conn)
     if (setsockopt(r_io_ctx->fd, IPPROTO_TCP, TCP_QUICKACK, &optval, sizeof(optval)) == 0) {
         r_io_ctx->tcp_quickack_set = 1;
     }
+    setsockopt(r_io_ctx->fd, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
 #endif
 
     return 0;
