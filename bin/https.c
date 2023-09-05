@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <openssl/rand.h>
 
 #include "api/s2n.h"
 #include "error/s2n_errno.h"
@@ -94,22 +93,28 @@ int https(struct s2n_connection *conn, uint32_t bench)
     }
 
     DEFER_CLEANUP(struct s2n_stuffer stuffer, s2n_stuffer_free);
-    const int buff_size = 1024;
-    POSIX_GUARD(s2n_stuffer_growable_alloc(&stuffer, buff_size));
+    POSIX_GUARD(s2n_stuffer_growable_alloc(&stuffer, 1024));
 
-    int remaining = 150000;
-    uint8_t buffer[buff_size];
-    while (remaining > 0) {
-        // need to leave room for null terminator
-        int to_write = (sizeof(buffer)-1) < remaining ? sizeof(buffer)-1 : remaining;
-        RAND_bytes(&buffer, to_write);
-        for (int i = 0; i < to_write; i++) {
-            buffer[i] = 97 + (buffer[i] % 26);
-        }
-        buffer[to_write] = 0;
-        BUFFER("%s", buffer);
-        remaining -= to_write;
+    BUFFER("<html><body><h1>Hello from s2n server</h1><pre>");
+
+    BUFFER("Client hello version: %d\n", s2n_connection_get_client_hello_version(conn));
+    BUFFER("Client protocol version: %d\n", s2n_connection_get_client_protocol_version(conn));
+    BUFFER("Server protocol version: %d\n", s2n_connection_get_server_protocol_version(conn));
+    BUFFER("Actual protocol version: %d\n", s2n_connection_get_actual_protocol_version(conn));
+
+    if (s2n_get_server_name(conn)) {
+        BUFFER("Server name: %s\n", s2n_get_server_name(conn));
     }
+
+    if (s2n_get_application_protocol(conn)) {
+        BUFFER("Application protocol: %s\n", s2n_get_application_protocol(conn));
+    }
+
+    BUFFER("Curve: %s\n", s2n_connection_get_curve(conn));
+    BUFFER("KEM: %s\n", s2n_connection_get_kem_name(conn));
+    BUFFER("KEM Group: %s\n", s2n_connection_get_kem_group_name(conn));
+    BUFFER("Cipher negotiated: %s\n", s2n_connection_get_cipher(conn));
+    BUFFER("Session resumption: %s\n", s2n_connection_is_session_resumed(conn) ? "true" : "false");
 
     uint32_t content_length = s2n_stuffer_data_available(&stuffer);
 
