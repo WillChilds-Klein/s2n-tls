@@ -413,6 +413,7 @@ int main(int argc, char *const *argv)
                 conn_settings.https_server = 1;
                 break;
             case 'b':
+                conn_settings.https_server = 1;
                 bytes = strtoul(optarg, NULL, 10);
                 GUARD_EXIT(bytes, "https-bench bytes needs to be some positive long value.");
                 conn_settings.https_bench = bytes;
@@ -661,7 +662,8 @@ int main(int argc, char *const *argv)
             if (child_pid == 0) {
                 /* This is the Child Handler Thread. We should handle the connection, then exit. */
                 int rc = handle_connection(fd, config, conn_settings);
-                close(fd);
+                // Leave it to the client to close the TCP connection.
+                //close(fd);
                 _exit(rc);
             } else if (child_pid == -1) {
                 close(fd);

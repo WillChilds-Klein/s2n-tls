@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/rand.h>
 
 #include "api/s2n.h"
 #include "error/s2n_errno.h"
@@ -73,6 +74,11 @@ int bench_handler(struct s2n_connection *conn, uint32_t bench)
 
     while (bytes_remaining) {
         uint32_t buffer_remaining = bytes_remaining < len ? bytes_remaining : len;
+        RAND_bytes(&big_buff[0], buffer_remaining);
+        // ASCII 32-127 are printable
+        for (int i = 0; i < buffer_remaining; i++) {
+            big_buff[i] = 32 + (big_buff[i] % 95);
+        }
         POSIX_GUARD(flush(buffer_remaining, big_buff, conn, &blocked));
         bytes_remaining -= buffer_remaining;
     }
