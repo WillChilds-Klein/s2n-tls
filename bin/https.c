@@ -65,15 +65,35 @@ static int flush(uint32_t left, uint8_t *buffer, struct s2n_connection *conn, s2
 /* In bench mode, we send some binary output */
 int bench_handler(struct s2n_connection *conn, uint32_t bench)
 {
-    HEADERS(bench);
-    fprintf(stdout, "Sending %u bytes...\n", bench);
-
     uint8_t big_buff[65536] = { 0 };
-    uint32_t len = sizeof(big_buff);
-    uint32_t bytes_remaining = bench;
+    uint32_t buff_len = sizeof(big_buff);
+    uint32_t requested_bytes = bench;
+    // bench=0 here indicates that the client will determine the number of
+    // bytes we send back. expected form of this request is a regular HTTP GET
+    // with a single parameter specifying an unit32.
+    if (requested_bytes == 0) {
+        s2n_blocked_status blocked = S2N_NOT_BLOCKED;
+        size_t bytes_read = 0;
+        bytes_read = s2n_recv(conn, big_buff, buff_len, &blocked);
+        if (bytes_read <= 0) {
+            return S2N_FAILURE;
+        }
+        // URL query params start after the ?= thing, clients shoud only
+        // specify a singe parameter that is an unsigned 32-bit integer
+        requested_bytes = strtoul(strchr(big_buff, '=')+1, NULL, 10);
+        if (requested_bytes == 0) {
+            fprintf(stdout, "BAD PARSE %u\n", requested_bytes);
+            return S2N_FAILURE;
+        }
+    }
+
+    HEADERS(requested_bytes);
+    fprintf(stdout, "Sending %u bytes...\n", requested_bytes);
+
+    uint32_t bytes_remaining = requested_bytes;
 
     while (bytes_remaining) {
-        uint32_t buffer_remaining = bytes_remaining < len ? bytes_remaining : len;
+        uint32_t buffer_remaining = bytes_remaining < buff_len ? bytes_remaining : buff_len;
         RAND_bytes(&big_buff[0], buffer_remaining);
         // ASCII 32-127 are printable
         for (int i = 0; i < buffer_remaining; i++) {
@@ -85,19 +105,15 @@ int bench_handler(struct s2n_connection *conn, uint32_t bench)
 
     fprintf(stdout, "Done. Closing connection.\n\n");
 
-    return 0;
+    return S2N_SUCCESS;
 }
 
 /*
  * simple https handler that allows https clients to connect
  * but currently does not do any user parsing
  */
-int https(struct s2n_connection *conn, uint32_t bench)
+int https(struct s2n_connection *conn)
 {
-    if (bench) {
-        return bench_handler(conn, bench);
-    }
-
     DEFER_CLEANUP(struct s2n_stuffer stuffer, s2n_stuffer_free);
     POSIX_GUARD(s2n_stuffer_growable_alloc(&stuffer, 1024));
 

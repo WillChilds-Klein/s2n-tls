@@ -237,7 +237,11 @@ int handle_connection(int fd, struct s2n_config *config, struct conn_settings se
     GUARD_EXIT(s2n_connection_free_handshake(conn), "Error freeing handshake memory after negotiation");
 
     if (settings.https_server) {
-        https(conn, settings.https_bench);
+        if (settings.https_server == 1) {
+            https(conn);
+        } else if (settings.https_server == 2) {
+            bench_handler(conn, settings.https_bench);
+        }
     } else if (!settings.only_negotiate) {
         bool stop_echo = false;
         echo(conn, fd, &stop_echo);
@@ -413,9 +417,9 @@ int main(int argc, char *const *argv)
                 conn_settings.https_server = 1;
                 break;
             case 'b':
-                conn_settings.https_server = 1;
+                conn_settings.https_server = 2;
                 bytes = strtoul(optarg, NULL, 10);
-                GUARD_EXIT(bytes, "https-bench bytes needs to be some positive long value.");
+                GUARD_EXIT(bytes >= 0LU, "https-bench bytes needs to be some nonnegative long value.");
                 conn_settings.https_bench = bytes;
                 break;
             case OPT_BUFFERED_SEND: {

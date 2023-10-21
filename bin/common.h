@@ -69,7 +69,7 @@ struct conn_settings {
     unsigned session_cache : 1;
     unsigned insecure : 1;
     unsigned use_corked_io : 1;
-    unsigned https_server : 1;
+    unsigned https_server : 2;
     uint32_t https_bench;
     int max_conns;
     const char *ca_dir;
@@ -88,7 +88,8 @@ int wait_for_shutdown(struct s2n_connection *conn, int sockfd);
 int early_data_recv(struct s2n_connection *conn);
 int early_data_send(struct s2n_connection *conn, uint8_t *data, uint32_t len);
 int print_connection_info(struct s2n_connection *conn);
-int https(struct s2n_connection *conn, uint32_t bench);
+int https(struct s2n_connection *conn);
+int bench_handler(struct s2n_connection *conn, uint32_t bench);
 int key_log_callback(void *ctx, struct s2n_connection *conn, uint8_t *logline, size_t len);
 
 int cache_store_callback(struct s2n_connection *conn, void *ctx, uint64_t ttl, const void *key, uint64_t key_size, const void *value, uint64_t value_size);
