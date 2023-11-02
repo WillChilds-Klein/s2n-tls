@@ -18,6 +18,7 @@
 #include <getopt.h>
 #include <inttypes.h>
 #include <netdb.h>
+#include <netinet/tcp.h>
 #include <signal.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -512,6 +513,22 @@ int main(int argc, char *const *argv)
     r = 1;
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &r, sizeof(int)) < 0) {
         fprintf(stderr, "setsockopt error: %s\n", strerror(errno));
+        exit(1);
+    }
+
+    struct linger no_linger = {.l_onoff = 1, .l_linger = 0};
+    if (setsockopt(sockfd, SOL_SOCKET, SO_LINGER, (char*)&no_linger, sizeof(no_linger)) < 0) {
+        fprintf(stderr, "Error: setting LINGER=0 sockopt failed with %s\n", strerror(errno));
+        exit(1);
+    }
+
+    if (setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &r, sizeof(r)) < 0) {
+        fprintf(stderr, "Error: setting TCP_NODELAY sockopt failed with %s\n", strerror(errno));
+        exit(1);
+    }
+
+    if (setsockopt(sockfd, IPPROTO_TCP, TCP_QUICKACK, &r, sizeof(r)) < 0) {
+        fprintf(stderr, "Error: setting TCP_QUICKACK sockopt failed with %s\n", strerror(errno));
         exit(1);
     }
 
