@@ -16,12 +16,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <openssl/rand.h>
 
 #include "api/s2n.h"
 #include "error/s2n_errno.h"
 #include "stuffer/s2n_stuffer.h"
 #include "utils/s2n_safety.h"
+
+#define NS_IN_MS 1000000.0
+#define MS_IN_S 1000
 
 #define STRING_LEN 1024
 static char str_buffer[STRING_LEN];
@@ -92,6 +96,9 @@ int bench_handler(struct s2n_connection *conn, uint32_t bench)
 
     uint32_t bytes_remaining = requested_bytes;
 
+    struct timespec start, finish;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+
     while (bytes_remaining) {
         uint32_t buffer_remaining = bytes_remaining < buff_len ? bytes_remaining : buff_len;
         RAND_bytes(&big_buff[0], buffer_remaining);
@@ -102,6 +109,10 @@ int bench_handler(struct s2n_connection *conn, uint32_t bench)
         POSIX_GUARD(flush(buffer_remaining, big_buff, conn, &blocked));
         bytes_remaining -= buffer_remaining;
     }
+
+    clock_gettime(CLOCK_MONOTONIC_RAW, &finish);
+    const double handshake_time_ms = ((finish.tv_sec - start.tv_sec) * MS_IN_S) + ((finish.tv_nsec - start.tv_nsec) / NS_IN_MS);
+    printf("SEND TIME: %f,%u,%u\n", handshake_time_ms, start.tv_sec * MS_IN_S + start.tv_nsec / NS_IN_MS, finish.tv_sec * MS_IN_S + finish.tv_nsec / NS_IN_MS);
 
     fprintf(stdout, "Done. Closing connection.\n\n");
 

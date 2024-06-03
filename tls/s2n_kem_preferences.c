@@ -50,6 +50,10 @@ const struct s2n_kem_group *pq_kem_groups_r3_kyber768[] = {
     &s2n_secp384r1_kyber_768_r3,
 };
 
+const struct s2n_kem_group *pq_kem_groups_r3_kyber768_x25519[] = {
+    &s2n_x25519_kyber_768_r3,
+};
+
 const struct s2n_kem_group *pq_kem_groups_r3_kyber1024[] = {
     &s2n_secp521r1_kyber_1024_r3,
 };
@@ -67,6 +71,14 @@ const struct s2n_kem_preferences kem_preferences_pq_tls_1_3_kyber768 = {
     .kems = NULL,
     .tls13_kem_group_count = s2n_array_len(pq_kem_groups_r3_kyber768),
     .tls13_kem_groups = pq_kem_groups_r3_kyber768,
+    .tls13_pq_hybrid_draft_revision = 5
+};
+
+const struct s2n_kem_preferences kem_preferences_pq_tls_1_3_kyber768_x25519 = {
+    .kem_count = 0,
+    .kems = NULL,
+    .tls13_kem_group_count = s2n_array_len(pq_kem_groups_r3_kyber768_x25519),
+    .tls13_kem_groups = pq_kem_groups_r3_kyber768_x25519,
     .tls13_pq_hybrid_draft_revision = 5
 };
 
