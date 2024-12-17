@@ -75,6 +75,8 @@ impl crate::harness::TlsBenchConfig for S2NConfig {
             (CipherSuite::AES_256_GCM_SHA384, KXGroup::Secp256R1) => "20190802",
             (CipherSuite::AES_128_GCM_SHA256, KXGroup::X25519) => "20240417",
             (CipherSuite::AES_256_GCM_SHA384, KXGroup::X25519) => "20190801",
+            (CipherSuite::AES_128_GCM_SHA256, KXGroup::Mlkem768X25519) => "PQ-TLS-1-2-2024-10-09",
+            (CipherSuite::AES_256_GCM_SHA384, KXGroup::Mlkem768X25519) => "PQ-TLS-1-2-2024-10-09",
         };
 
         let mut builder = Builder::new();

@@ -25,6 +25,7 @@ use rustls::{
     ProtocolVersion::TLSv1_3,
     RootCertStore, ServerConfig, ServerConnection,
 };
+use rustls_post_quantum::X25519MLKEM768;
 use std::{
     error::Error,
     io::{BufReader, Read, Write},
@@ -104,6 +105,7 @@ impl TlsBenchConfig for RustlsConfig {
         let kx_group = match crypto_config.kx_group {
             KXGroup::Secp256R1 => &SECP256R1,
             KXGroup::X25519 => &X25519,
+            KXGroup::Mlkem768X25519 => &X25519MLKEM768,
         };
 
         let crypto_provider = Arc::new(CryptoProvider {

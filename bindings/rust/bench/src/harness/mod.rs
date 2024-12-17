@@ -110,6 +110,7 @@ pub enum KXGroup {
     Secp256R1,
     #[default]
     X25519,
+    Mlkem768X25519,
 }
 
 impl Debug for KXGroup {
@@ -117,6 +118,7 @@ impl Debug for KXGroup {
         match self {
             Self::Secp256R1 => write!(f, "secp256r1"),
             Self::X25519 => write!(f, "x25519"),
+            Self::Mlkem768X25519 => write!(f, "mlkem-x25519"),
         }
     }
 }

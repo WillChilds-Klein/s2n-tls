@@ -10,6 +10,7 @@ libc = "0.2"
 strum = { version = "0.25", features = ["derive"] }
 rustls = { version = "0.23" }
 rustls-pemfile = { version = "2" }
+rustls-post-quantum= { version = "0.2.1" }
 openssl = { version = "0.10", features = ["vendored"] }
 
 [dev-dependencies]

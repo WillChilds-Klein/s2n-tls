@@ -56,6 +56,8 @@ impl TlsBenchConfig for OpenSslConfig {
         let ec_key = match crypto_config.kx_group {
             KXGroup::Secp256R1 => "P-256",
             KXGroup::X25519 => "X25519",
+            // NOTE: OpenSSL doesn't support ML-KEM yet, so just compare ECC
+            KXGroup::Mlkem768X25519 => "X25519",
         };
 
         let ssl_method = match mode {
